@@ -1,0 +1,67 @@
+{% extends 'base.html' %}
+
+{% block title %}Prediction History{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-lg-10 mx-auto">
+        <div class="card card-custom">
+            <div class="card-header-custom">
+                <h1>📜 Prediction History</h1>
+                <p>View all your previous diabetes predictions</p>
+            </div>
+            
+            <div class="card-body" style="padding: 30px;">
+                {% if predictions %}
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr style="background: #f8f9fa;">
+                                    <th>Date</th>
+                                    <th>Age</th>
+                                    <th>Glucose</th>
+                                    <th>BMI</th>
+                                    <th>LR Prediction</th>
+                                    <th>RF Prediction</th>
+                                    <th>Confidence (RF)</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for prediction in predictions %}
+                                <tr>
+                                    <td>
+                                        <small>{{ prediction.created_at|date:"M d, Y H:i" }}</small>
+                                    </td>
+                                    <td>{{ prediction.age }}</td>
+                                    <td>{{ prediction.glucose }}</td>
+                                    <td>{{ prediction.bmi }}</td>
+                                    <td>
+                                        <span class="badge-custom {% if 'Diabetic' in prediction.prediction_lr %}badge-diabetic{% else %}badge-not-diabetic{% endif %}">
+                                            {{ prediction.prediction_lr }}
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <span class="badge-custom {% if 'Diabetic' in prediction.prediction_rf %}badge-diabetic{% else %}badge-not-diabetic{% endif %}">
+                                            {{ prediction.prediction_rf }}
+                                        </span>
+                                    </td>
+                                    <td>{{ prediction.confidence_rf }}%</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                {% else %}
+                    <div style="text-align: center; padding: 40px;">
+                        <h4>No predictions yet</h4>
+                        <p style="color: #999;">Make your first prediction to see it here</p>
+                        <a href="{% url 'home' %}" class="btn-submit" style="display: inline-block; width: auto; padding: 10px 30px; text-decoration: none;">
+                            Start Predicting
+                        </a>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

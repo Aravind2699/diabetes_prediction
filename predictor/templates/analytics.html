@@ -1,0 +1,359 @@
+{% extends 'base.html' %}
+
+{% block title %}Analytics Dashboard - Diabetes Predictor{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-lg-12">
+        <div class="card card-custom" style="margin-bottom: 30px;">
+            <div class="card-header-custom">
+                <h1>📊 Analytics Dashboard</h1>
+                <p>Comprehensive Model Comparison & Data Metrics Analysis</p>
+            </div>
+        </div>
+
+        <!-- Data Details Section -->
+        <div class="card card-custom" style="margin-bottom: 30px;">
+            <div class="card-body" style="padding: 30px;">
+                <h3 style="margin-top: 0; color: #667eea;">📋 Dataset Details</h3>
+                
+                <div class="row">
+                    <div class="col-md-3">
+                        <div style="background: rgba(102, 126, 234, 0.1); padding: 20px; border-radius: 10px; text-align: center;">
+                            <h2 style="margin: 0; color: #667eea;">{{ metrics.dataset.total_samples }}</h2>
+                            <p style="margin: 10px 0 0 0; color: #666;">Total Samples</p>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div style="background: rgba(40, 167, 69, 0.1); padding: 20px; border-radius: 10px; text-align: center;">
+                            <h2 style="margin: 0; color: #28a745;">{{ metrics.dataset.train_samples }}</h2>
+                            <p style="margin: 10px 0 0 0; color: #666;">Training Samples (80%)</p>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div style="background: rgba(220, 53, 69, 0.1); padding: 20px; border-radius: 10px; text-align: center;">
+                            <h2 style="margin: 0; color: #dc3545;">{{ metrics.dataset.test_samples }}</h2>
+                            <p style="margin: 10px 0 0 0; color: #666;">Test Samples (20%)</p>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div style="background: rgba(255, 193, 7, 0.1); padding: 20px; border-radius: 10px; text-align: center;">
+                            <h2 style="margin: 0; color: #ffc107;">{{ metrics.dataset|length }}</h2>
+                            <p style="margin: 10px 0 0 0; color: #666;">Features</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div style="margin-top: 20px; padding: 15px; background: rgba(0, 0, 0, 0.03); border-radius: 8px;">
+                    <strong>Class Distribution:</strong>
+                    <div style="margin-top: 10px;">
+                        <p style="margin: 5px 0;">
+                            ✅ Negative (No Diabetes): <span style="background: #28a745; color: white; padding: 3px 8px; border-radius: 4px;">{{ metrics.dataset.negative_class }} ({{ negative_percentage }}%)</span>
+                        </p>
+                        <p style="margin: 5px 0;">
+                            ⚠️ Positive (Diabetic): <span style="background: #dc3545; color: white; padding: 3px 8px; border-radius: 4px;">{{ metrics.dataset.positive_class }} ({{ positive_percentage }}%)</span>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Feature Explanation Section -->
+        <div class="card card-custom" style="margin-bottom: 30px;">
+            <div class="card-body" style="padding: 30px;">
+                <h3 style="margin-top: 0; color: #667eea;">📊 Data Metrics Explanation</h3>
+                <p style="color: #666; margin-bottom: 20px;">All input features used for diabetes prediction:</p>
+                
+                <div class="row">
+                    {% for feature, explanation in feature_explanations.items %}
+                    <div class="col-md-6">
+                        <div style="background: rgba(0, 0, 0, 0.02); padding: 15px; border-radius: 8px; margin-bottom: 15px; border-left: 4px solid #667eea;">
+                            <strong>{{ feature }}</strong>
+                            <p style="margin: 8px 0 0 0; color: #666; font-size: 0.95rem;">{{ explanation }}</p>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Model Comparison Section -->
+        <div class="card card-custom" style="margin-bottom: 30px;">
+            <div class="card-body" style="padding: 30px;">
+                <h3 style="margin-top: 0; color: #667eea;">🤖 Algorithm Comparison</h3>
+                
+                <!-- Performance Metrics Comparison -->
+                <h4 style="margin-top: 30px; color: #333;">Performance Metrics</h4>
+                <div class="table-responsive">
+                    <table class="table" style="margin-top: 15px;">
+                        <thead style="background: #f8f9fa;">
+                            <tr>
+                                <th>Metric</th>
+                                <th>Logistic Regression</th>
+                                <th>Random Forest</th>
+                                <th>Difference</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>Accuracy</strong></td>
+                                <td>
+                                    <span style="background: rgba(102, 126, 234, 0.2); padding: 5px 10px; border-radius: 4px;">
+                                        {{ metrics.logistic_regression.accuracy }}
+                                    </span>
+                                </td>
+                                <td>
+                                    <span style="background: rgba(102, 126, 234, 0.2); padding: 5px 10px; border-radius: 4px;">
+                                        {{ metrics.random_forest.accuracy }}
+                                    </span>
+                                </td>
+                                <td>
+                                    {% if metrics.random_forest.accuracy > metrics.logistic_regression.accuracy %}
+                                        <span style="color: #28a745;">+{{ metrics.random_forest.accuracy|add:metrics.logistic_regression.accuracy|add:0 }}</span>
+                                    {% elif metrics.random_forest.accuracy < metrics.logistic_regression.accuracy %}
+                                        <span style="color: #dc3545;">{{ metrics.random_forest.accuracy|add:metrics.logistic_regression.accuracy|add:0 }}</span>
+                                    {% else %}
+                                        <span>Equal</span>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><strong>Precision</strong></td>
+                                <td>
+                                    <span style="background: rgba(102, 126, 234, 0.2); padding: 5px 10px; border-radius: 4px;">
+                                        {{ metrics.logistic_regression.precision }}
+                                    </span>
+                                </td>
+                                <td>
+                                    <span style="background: rgba(102, 126, 234, 0.2); padding: 5px 10px; border-radius: 4px;">
+                                        {{ metrics.random_forest.precision }}
+                                    </span>
+                                </td>
+                                <td style="font-size: 0.9rem;">Diabetic predictions accuracy</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Recall</strong></td>
+                                <td>
+                                    <span style="background: rgba(102, 126, 234, 0.2); padding: 5px 10px; border-radius: 4px;">
+                                        {{ metrics.logistic_regression.recall }}
+                                    </span>
+                                </td>
+                                <td>
+                                    <span style="background: rgba(102, 126, 234, 0.2); padding: 5px 10px; border-radius: 4px;">
+                                        {{ metrics.random_forest.recall }}
+                                    </span>
+                                </td>
+                                <td style="font-size: 0.9rem;">True positive detection rate</td>
+                            </tr>
+                            <tr>
+                                <td><strong>F1-Score</strong></td>
+                                <td>
+                                    <span style="background: rgba(102, 126, 234, 0.2); padding: 5px 10px; border-radius: 4px;">
+                                        {{ metrics.logistic_regression.f1_score }}
+                                    </span>
+                                </td>
+                                <td>
+                                    <span style="background: rgba(102, 126, 234, 0.2); padding: 5px 10px; border-radius: 4px;">
+                                        {{ metrics.random_forest.f1_score }}
+                                    </span>
+                                </td>
+                                <td style="font-size: 0.9rem;">Balance of precision & recall</td>
+                            </tr>
+                            <tr>
+                                <td><strong>ROC-AUC</strong></td>
+                                <td>
+                                    <span style="background: rgba(102, 126, 234, 0.2); padding: 5px 10px; border-radius: 4px;">
+                                        {{ metrics.logistic_regression.roc_auc }}
+                                    </span>
+                                </td>
+                                <td>
+                                    <span style="background: rgba(102, 126, 234, 0.2); padding: 5px 10px; border-radius: 4px;">
+                                        {{ metrics.random_forest.roc_auc }}
+                                    </span>
+                                </td>
+                                <td style="font-size: 0.9rem;">Classification curve quality</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Algorithm Descriptions -->
+                <h4 style="margin-top: 30px; color: #333;">Algorithm Descriptions</h4>
+                <div class="row" style="margin-top: 20px;">
+                    <div class="col-md-6">
+                        <div style="background: rgba(102, 126, 234, 0.1); padding: 20px; border-radius: 10px;">
+                            <h5 style="color: #667eea;">🔵 Logistic Regression</h5>
+                            <p style="font-size: 0.95rem; line-height: 1.6;">
+                                A linear classification algorithm that models the probability of an event occurring. 
+                                It's <strong>interpretable</strong> and works well when features have linear relationships with the target.
+                            </p>
+                            <p style="font-size: 0.9rem; color: #666;"><strong>Pros:</strong> Fast, interpretable, good for binary classification</p>
+                            <p style="font-size: 0.9rem; color: #666;"><strong>Cons:</strong> Assumes linear relationships, may underfit complex data</p>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div style="background: rgba(40, 167, 69, 0.1); padding: 20px; border-radius: 10px;">
+                            <h5 style="color: #28a745;">🌲 Random Forest</h5>
+                            <p style="font-size: 0.95rem; line-height: 1.6;">
+                                An ensemble method that combines multiple decision trees to make predictions. 
+                                It's <strong>robust</strong> and captures complex non-linear patterns in the data.
+                            </p>
+                            <p style="font-size: 0.9rem; color: #666;"><strong>Pros:</strong> Handles non-linear patterns, robust, less prone to overfitting</p>
+                            <p style="font-size: 0.9rem; color: #666;"><strong>Cons:</strong> Slower, less interpretable, memory intensive</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Confusion Matrix -->
+                <h4 style="margin-top: 30px; color: #333;">Confusion Matrices</h4>
+                <div class="row" style="margin-top: 20px;">
+                    <div class="col-md-6">
+                        <div style="background: rgba(102, 126, 234, 0.05); padding: 20px; border-radius: 10px;">
+                            <h6 style="text-align: center; color: #667eea;">Logistic Regression</h6>
+                            <table style="width: 100%; text-align: center; margin-top: 15px; font-size: 0.9rem;">
+                                <tr>
+                                    <td></td>
+                                    <td style="padding: 5px;"><strong>Negative</strong></td>
+                                    <td style="padding: 5px;"><strong>Positive</strong></td>
+                                </tr>
+                                <tr>
+                                    <td style="padding: 5px;"><strong>Negative</strong></td>
+                                    <td style="padding: 10px; background: #28a745; color: white; border-radius: 4px;">{{ metrics.logistic_regression.confusion_matrix.0.0 }}</td>
+                                    <td style="padding: 10px; background: #ffc107; color: #333; border-radius: 4px;">{{ metrics.logistic_regression.confusion_matrix.0.1 }}</td>
+                                </tr>
+                                <tr>
+                                    <td style="padding: 5px;"><strong>Positive</strong></td>
+                                    <td style="padding: 10px; background: #ffc107; color: #333; border-radius: 4px;">{{ metrics.logistic_regression.confusion_matrix.1.0 }}</td>
+                                    <td style="padding: 10px; background: #dc3545; color: white; border-radius: 4px;">{{ metrics.logistic_regression.confusion_matrix.1.1 }}</td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div style="background: rgba(40, 167, 69, 0.05); padding: 20px; border-radius: 10px;">
+                            <h6 style="text-align: center; color: #28a745;">Random Forest</h6>
+                            <table style="width: 100%; text-align: center; margin-top: 15px; font-size: 0.9rem;">
+                                <tr>
+                                    <td></td>
+                                    <td style="padding: 5px;"><strong>Negative</strong></td>
+                                    <td style="padding: 5px;"><strong>Positive</strong></td>
+                                </tr>
+                                <tr>
+                                    <td style="padding: 5px;"><strong>Negative</strong></td>
+                                    <td style="padding: 10px; background: #28a745; color: white; border-radius: 4px;">{{ metrics.random_forest.confusion_matrix.0.0 }}</td>
+                                    <td style="padding: 10px; background: #ffc107; color: #333; border-radius: 4px;">{{ metrics.random_forest.confusion_matrix.0.1 }}</td>
+                                </tr>
+                                <tr>
+                                    <td style="padding: 5px;"><strong>Positive</strong></td>
+                                    <td style="padding: 10px; background: #ffc107; color: #333; border-radius: 4px;">{{ metrics.random_forest.confusion_matrix.1.0 }}</td>
+                                    <td style="padding: 10px; background: #dc3545; color: white; border-radius: 4px;">{{ metrics.random_forest.confusion_matrix.1.1 }}</td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Metrics Explanation Section -->
+        <div class="card card-custom" style="margin-bottom: 30px;">
+            <div class="card-body" style="padding: 30px;">
+                <h3 style="margin-top: 0; color: #667eea;">📈 Metrics Interpretation Guide</h3>
+                
+                <div style="background: rgba(102, 126, 234, 0.05); padding: 20px; border-radius: 10px;">
+                    <div style="margin-bottom: 20px;">
+                        <h5 style="color: #667eea;">Accuracy</h5>
+                        <p style="margin: 10px 0; color: #666;">
+                            The proportion of correct predictions (both diabetic and non-diabetic) out of all predictions made.
+                            <br><strong>Formula:</strong> (TP + TN) / (TP + TN + FP + FN)
+                            <br><strong>Range:</strong> 0 to 1 (higher is better)
+                        </p>
+                    </div>
+
+                    <div style="margin-bottom: 20px;">
+                        <h5 style="color: #667eea;">Precision</h5>
+                        <p style="margin: 10px 0; color: #666;">
+                            Out of all positive predictions (diabetic), how many were actually correct?
+                            <br><strong>Formula:</strong> TP / (TP + FP)
+                            <br><strong>Use case:</strong> Important when false positives have high cost
+                        </p>
+                    </div>
+
+                    <div style="margin-bottom: 20px;">
+                        <h5 style="color: #667eea;">Recall (Sensitivity)</h5>
+                        <p style="margin: 10px 0; color: #666;">
+                            Out of all actual diabetic cases, how many did the model correctly identify?
+                            <br><strong>Formula:</strong> TP / (TP + FN)
+                            <br><strong>Use case:</strong> Important when false negatives have high cost (missing diabetics)
+                        </p>
+                    </div>
+
+                    <div style="margin-bottom: 20px;">
+                        <h5 style="color: #667eea;">F1-Score</h5>
+                        <p style="margin: 10px 0; color: #666;">
+                            The harmonic mean of precision and recall, balancing both metrics.
+                            <br><strong>Formula:</strong> 2 * (Precision * Recall) / (Precision + Recall)
+                            <br><strong>Use case:</strong> Best single metric when precision and recall are equally important
+                        </p>
+                    </div>
+
+                    <div>
+                        <h5 style="color: #667eea;">ROC-AUC (Receiver Operating Characteristic - Area Under Curve)</h5>
+                        <p style="margin: 10px 0; color: #666;">
+                            Measures the model's ability to distinguish between classes across different thresholds.
+                            <br><strong>Range:</strong> 0 to 1 (0.5 = random classifier, 1.0 = perfect classifier)
+                            <br><strong>Use case:</strong> Good for assessing overall model performance
+                        </p>
+                    </div>
+                </div>
+
+                <div style="background: rgba(255, 193, 7, 0.1); padding: 20px; border-radius: 10px; margin-top: 20px;">
+                    <strong>Key Abbreviations:</strong>
+                    <ul style="margin: 10px 0 0 20px;">
+                        <li><strong>TP (True Positive):</strong> Correctly predicted diabetic</li>
+                        <li><strong>TN (True Negative):</strong> Correctly predicted non-diabetic</li>
+                        <li><strong>FP (False Positive):</strong> Incorrectly predicted diabetic</li>
+                        <li><strong>FN (False Negative):</strong> Incorrectly predicted non-diabetic</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Recommendations Section -->
+        <div class="card card-custom" style="margin-bottom: 30px;">
+            <div class="card-body" style="padding: 30px;">
+                <h3 style="margin-top: 0; color: #667eea;">💡 Model Selection Recommendations</h3>
+                
+                <div style="background: rgba(102, 126, 234, 0.05); padding: 20px; border-radius: 10px;">
+                    <p style="color: #666; line-height: 1.8;">
+                        <strong>Use Logistic Regression when:</strong>
+                        <ul style="margin: 10px 0 0 20px;">
+                            <li>You need an interpretable model</li>
+                            <li>Speed of prediction is critical</li>
+                            <li>You want to understand feature importance</li>
+                            <li>Data has linear relationships</li>
+                        </ul>
+                    </p>
+
+                    <p style="color: #666; line-height: 1.8; margin-top: 15px;">
+                        <strong>Use Random Forest when:</strong>
+                        <ul style="margin: 10px 0 0 20px;">
+                            <li>You need better predictive accuracy</li>
+                            <li>Data has complex non-linear patterns</li>
+                            <li>You have enough computational resources</li>
+                            <li>Accuracy is more important than interpretability</li>
+                        </ul>
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Back Button -->
+        <div style="text-align: center; margin-bottom: 30px;">
+            <a href="{% url 'home' %}" class="btn-submit" style="display: inline-block; width: auto; padding: 10px 30px; text-decoration: none;">
+                🏠 Back to Home
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}

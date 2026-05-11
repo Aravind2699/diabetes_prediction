@@ -1,0 +1,128 @@
+{% extends 'base.html' %}
+
+{% block title %}Home - Diabetes Predictor{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-lg-8 mx-auto">
+        <div class="card card-custom">
+            <div class="card-header-custom">
+                <h1>🔍 Diabetes Predictor</h1>
+                <p>Enter your health metrics for early diabetes prediction</p>
+            </div>
+            
+            <div class="card-body" style="padding: 40px;">
+                <form method="POST">
+                    {% csrf_token %}
+                    
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                {{ form.pregnancies.label_tag }}
+                                {{ form.pregnancies }}
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                {{ form.glucose.label_tag }}
+                                {{ form.glucose }}
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                {{ form.blood_pressure.label_tag }}
+                                {{ form.blood_pressure }}
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                {{ form.skin_thickness.label_tag }}
+                                {{ form.skin_thickness }}
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                {{ form.insulin.label_tag }}
+                                {{ form.insulin }}
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                {{ form.bmi.label_tag }}
+                                {{ form.bmi }}
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                {{ form.diabetes_pedigree_function.label_tag }}
+                                {{ form.diabetes_pedigree_function }}
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                {{ form.age.label_tag }}
+                                {{ form.age }}
+                            </div>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn-submit">
+                        🚀 Predict Diabetes Risk
+                    </button>
+                </form>
+
+                <div class="alert alert-custom alert-info" style="margin-top: 20px;">
+                    <strong>ℹ️ Note:</strong> This predictor uses machine learning models trained on medical data. Always consult with a healthcare professional for medical advice.
+                </div>
+
+                <div style="text-align: center; margin-top: 15px;">
+                    <a href="{% url 'analytics' %}" style="color: #667eea; text-decoration: none; font-weight: 600;">
+                        📊 View Analytics Dashboard →
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        {% if recent_predictions %}
+        <div class="recent-predictions">
+            <div class="card card-custom">
+                <div class="card-header-custom" style="padding: 20px;">
+                    <h5 style="margin: 0;">📋 Recent Predictions</h5>
+                </div>
+                <div class="card-body">
+                    {% for prediction in recent_predictions %}
+                    <div class="prediction-item">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <strong>Age:</strong> {{ prediction.age }} | 
+                                <strong>Glucose:</strong> {{ prediction.glucose }} | 
+                                <strong>BMI:</strong> {{ prediction.bmi }}
+                            </div>
+                            <div>
+                                <span class="badge-custom {% if 'Diabetic ⚠️' in prediction.prediction_rf %}badge-diabetic{% else %}badge-not-diabetic{% endif %}">
+                                    {{ prediction.prediction_rf }}
+                                </span>
+                            </div>
+                        </div>
+                        <small style="color: #999;">{{ prediction.created_at|date:"M d, Y H:i" }}</small>
+                    </div>
+                    {% endfor %}
+                    <div style="text-align: center; margin-top: 15px;">
+                        <a href="{% url 'history' %}" style="color: #667eea; text-decoration: none;">View Full History →</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,82 @@
+{% extends 'base.html' %}
+
+{% block title %}Prediction Result{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-lg-8 mx-auto">
+        <div class="card card-custom">
+            <div class="card-header-custom">
+                <h1>📊 Prediction Results</h1>
+            </div>
+            
+            <div class="card-body" style="padding: 40px;">
+                <!-- Model Comparison -->
+                <div class="model-comparison">
+                    <!-- Logistic Regression Result -->
+                    <div>
+                        <h3 style="text-align: center; margin-bottom: 15px;">🔵 Logistic Regression</h3>
+                        <div class="result-box {% if 'Diabetic' in result.lr_prediction %}result-diabetic{% else %}result-not-diabetic{% endif %}">
+                            <div class="result-title">{{ result.lr_prediction }}</div>
+                            <div class="result-confidence">
+                                Confidence: <strong>{{ result.lr_confidence }}%</strong>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Random Forest Result -->
+                    <div>
+                        <h3 style="text-align: center; margin-bottom: 15px;">🌲 Random Forest</h3>
+                        <div class="result-box {% if 'Diabetic' in result.rf_prediction %}result-diabetic{% else %}result-not-diabetic{% endif %}">
+                            <div class="result-title">{{ result.rf_prediction }}</div>
+                            <div class="result-confidence">
+                                Confidence: <strong>{{ result.rf_confidence }}%</strong>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Input Data Summary -->
+                <div style="margin-top: 30px; padding: 20px; background: rgba(0, 0, 0, 0.02); border-radius: 10px;">
+                    <h4 style="margin-bottom: 15px;">📋 Input Data Summary</h4>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <p><strong>Pregnancies:</strong> {{ input_data.pregnancies }}</p>
+                            <p><strong>Glucose:</strong> {{ input_data.glucose }} mg/dL</p>
+                            <p><strong>Blood Pressure:</strong> {{ input_data.blood_pressure }} mmHg</p>
+                            <p><strong>Skin Thickness:</strong> {{ input_data.skin_thickness }} mm</p>
+                        </div>
+                        <div class="col-md-6">
+                            <p><strong>Insulin:</strong> {{ input_data.insulin }} mu U/ml</p>
+                            <p><strong>BMI:</strong> {{ input_data.bmi }}</p>
+                            <p><strong>Diabetes Pedigree:</strong> {{ input_data.diabetes_pedigree_function }}</p>
+                            <p><strong>Age:</strong> {{ input_data.age }} years</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Recommendations -->
+                <div style="margin-top: 20px; padding: 20px; background: rgba(255, 193, 7, 0.1); border-left: 4px solid #ffc107; border-radius: 5px;">
+                    <h4 style="margin-bottom: 10px;">⚠️ Recommendations</h4>
+                    <ul style="margin-bottom: 0;">
+                        <li>Consult with a healthcare professional for diagnosis</li>
+                        <li>Maintain regular blood sugar monitoring</li>
+                        <li>Follow a balanced diet and exercise routine</li>
+                        <li>Get regular medical checkups</li>
+                    </ul>
+                </div>
+
+                <!-- Action Buttons -->
+                <div style="margin-top: 30px; text-align: center;">
+                    <a href="{% url 'home' %}" class="btn-submit" style="display: inline-block; width: auto; padding: 10px 30px; text-decoration: none;">
+                        🔄 Make Another Prediction
+                    </a>
+                    <a href="{% url 'history' %}" style="display: inline-block; margin-left: 10px; padding: 10px 30px; background: #6c757d; color: white; text-decoration: none; border-radius: 8px; font-weight: 600;">
+                        📜 View History
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

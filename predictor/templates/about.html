@@ -1,0 +1,90 @@
+{% extends 'base.html' %}
+
+{% block title %}About - Diabetes Predictor{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-lg-8 mx-auto">
+        <div class="card card-custom">
+            <div class="card-header-custom">
+                <h1>ℹ️ About This Project</h1>
+            </div>
+            
+            <div class="card-body" style="padding: 40px;">
+                <h3 style="margin-top: 0;">🎯 Project Overview</h3>
+                <p>
+                    This Diabetes Predictor is an advanced machine learning application designed to help with early detection and risk assessment of diabetes. 
+                    It uses state-of-the-art algorithms to provide accurate predictions based on comprehensive health metrics.
+                </p>
+
+                <h3 style="margin-top: 30px;">🤖 Machine Learning Models</h3>
+                <div style="background: rgba(0, 0, 0, 0.02); padding: 20px; border-radius: 10px; margin: 15px 0;">
+                    <h5>1. Logistic Regression</h5>
+                    <p>
+                        A linear classification algorithm that models the probability of diabetes occurrence. 
+                        It's interpretable and provides clear probability scores for predictions.
+                    </p>
+
+                    <h5 style="margin-top: 15px;">2. Random Forest</h5>
+                    <p>
+                        An ensemble learning method that combines multiple decision trees to improve prediction accuracy. 
+                        It captures complex patterns in the data and provides robust predictions.
+                    </p>
+                </div>
+
+                <h3 style="margin-top: 30px;">📊 Dataset</h3>
+                <p>
+                    The models are trained on the Pima Indians Diabetes Dataset, which contains health metrics from 768 individuals. 
+                    The dataset includes features such as:
+                </p>
+                <ul>
+                    <li>Number of pregnancies</li>
+                    <li>Glucose level</li>
+                    <li>Blood pressure</li>
+                    <li>Skin thickness</li>
+                    <li>Insulin level</li>
+                    <li>Body Mass Index (BMI)</li>
+                    <li>Diabetes pedigree function</li>
+                    <li>Age</li>
+                </ul>
+
+                <h3 style="margin-top: 30px;">⚠️ Disclaimer</h3>
+                <div style="background: rgba(220, 53, 69, 0.1); padding: 20px; border-left: 4px solid #dc3545; border-radius: 5px;">
+                    <p style="margin: 0;">
+                        <strong>This tool is for educational and informational purposes only.</strong> 
+                        It should NOT be used as a substitute for professional medical advice, diagnosis, or treatment. 
+                        Always consult with a qualified healthcare professional for medical concerns.
+                    </p>
+                </div>
+
+                <h3 style="margin-top: 30px;">🛠️ Technology Stack</h3>
+                <ul>
+                    <li><strong>Backend:</strong> Django (Python Web Framework)</li>
+                    <li><strong>Machine Learning:</strong> Scikit-learn</li>
+                    <li><strong>Data Processing:</strong> Pandas, NumPy</li>
+                    <li><strong>Frontend:</strong> Bootstrap 5, HTML5, CSS3</li>
+                    <li><strong>Database:</strong> SQLite</li>
+                </ul>
+
+                <h3 style="margin-top: 30px;">📈 Model Performance</h3>
+                <p>
+                    Both models are trained and evaluated using standard machine learning metrics including accuracy, precision, recall, and F1-score. 
+                    The models achieve high accuracy on test data and are continuously validated for reliability.
+                </p>
+
+                <h3 style="margin-top: 30px;">📞 Contact & Support</h3>
+                <p>
+                    For questions, feedback, or support, please contact the development team. 
+                    This project is maintained with the goal of promoting early diabetes detection and healthcare awareness.
+                </p>
+
+                <div style="margin-top: 30px; text-align: center;">
+                    <a href="{% url 'home' %}" class="btn-submit" style="display: inline-block; width: auto; padding: 10px 30px; text-decoration: none;">
+                        Back to Home
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
